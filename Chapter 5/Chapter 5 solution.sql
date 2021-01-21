@@ -128,4 +128,4 @@ SELECT HomeOffice.CustomerName AS HomeOfficeCustName
 FROM Sales.Customers as HomeOffice
 INNER JOIN Sales.Customers as Stores
     ON HomeOffice.CustomerID = Stores.BillToCustomerID
-WHERE  HomeOffice.CustomerID=1;
+WHERE  Stores.BillToCustomerID = 1;
