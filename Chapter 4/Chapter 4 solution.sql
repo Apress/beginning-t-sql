@@ -243,14 +243,14 @@ SELECT SERVERPROPERTY('Edition'),
 USE WideWorldImporters;
 GO
 --4.6.5
-SELECT PurchaseOrderID
+SELECT DeliveryMethodID
 	,CASE WHEN DeliveryMethodID IN (7,8,9,10) THEN 'Freight'		
 		ELSE 'Courier/Other'
 	END AS DeliveryMethod
 FROM Purchasing.PurchaseOrders;
 
 --4.6.6
-SELECT PurchaseOrderID
+SELECT DeliveryMethodID
 	  , IIF(DeliveryMethodID IN (7,8,9,10), 'Freight', 'Courier/Other')  as DeliveryMethod 
 FROM Purchasing.PurchaseOrders;
 
