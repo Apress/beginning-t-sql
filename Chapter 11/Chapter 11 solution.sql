@@ -45,7 +45,7 @@ ROLLBACK TRAN;
 SELECT * FROM dbo.Demo2;
 
 /*
-Invalid object name 'dbo.demo'
+Invalid object name 'dbo.demo2'
 Since the transaction was rolled back, even the creation of the new table was rolled back.
 */
 

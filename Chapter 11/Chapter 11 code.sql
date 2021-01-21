@@ -51,7 +51,7 @@ GO
 SELECT col1
 FROM dbo.demoTransaction;
 
-DROP TABLE dbo.demoTransaction;
+
  
 --Listing 11-3. Nested transactions
 --1
