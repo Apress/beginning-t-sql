@@ -23,6 +23,7 @@ WHERE CustomerID BETWEEN 11000 AND 11200
 ORDER BY CustomerID;
 
 --Listing 8-2. Using the NTILE Function
+--1
 SELECT SP.FirstName, SP.LastName,
     SUM(SOH.TotalDue) AS TotalSales,
     NTILE(4) OVER(ORDER BY SUM(SOH.TotalDue)) AS Bucket
