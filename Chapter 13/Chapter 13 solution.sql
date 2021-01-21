@@ -232,44 +232,57 @@ PRINT @TotalSold;
 
 --13.4.4
 --Here is a possible solution
-GO
-CREATE OR ALTER PROCEDURE [dbo].[procAddNewPmtType] @pmtType varchar(40), @UserID int=1
+CREATE OR ALTER PROCEDURE [dbo].[procAddNewPmtType]
+    @pmtType varchar(40)
+  , @UserID INT = 1
 AS
-SET NOCOUNT ON
+SET NOCOUNT ON;
 BEGIN
     BEGIN TRY
-            DECLARE @MessageExists varchar(100) = (
-                   SELECT TOP 1 PaymentMethodName 
-                   FROM Application.PaymentMethods
-                   WHERE PaymentMethodName = @pmtType
-                                              )
-			IF (@MessageExists) IS NOT NULL
-			BEGIN
-				PRINT 'Check for this type if it already exists'
-				RETURN;
-			END
-			ELSE
-			BEGIN
-				SET XACT_ABORT ON
-				DECLARE @PMI table (pmi int)
-				BEGIN TRAN
-					INSERT INTO Application.PaymentMethods (PaymentMethodName, LastEditedBy)
-					OUTPUT Inserted.PaymentMethodID INTO @pmi
-					VALUES (@pmtType, @UserID)				
-				COMMIT TRAN
-				SELECT pmi as ID 
-				FROM @PMI				
-			END														
+        DECLARE @MessageExists VARCHAR(100) =
+                (
+                    SELECT TOP 1
+                           PaymentMethodName
+                    FROM Application.PaymentMethods
+                    WHERE PaymentMethodName = @pmtType
+                );
+        IF (@MessageExists) IS NOT NULL
+        BEGIN
+            PRINT 'Check for this type if it already exists';
+            RETURN;
+        END;
+        ELSE
+        BEGIN
+            SET XACT_ABORT ON;
+            DECLARE @PMI TABLE
+            (
+                pmi INT
+            );
+            BEGIN TRAN;
+            INSERT INTO Application.PaymentMethods
+            (
+                PaymentMethodName
+              , LastEditedBy
+            )
+            OUTPUT Inserted.PaymentMethodID
+            INTO @PMI
+            VALUES
+            (@pmtType, @UserID);
+            COMMIT TRAN;
+            SELECT pmi AS ID
+            FROM @PMI;
+        END;
     END TRY
-    BEGIN CATCH	
-		IF @@TRANCOUNT>0
-			ROLLBACK
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK;
+        UPDATE @PMI
+        SET pmi = NULL; --TRANSACTION ROLLED BACK; ID canceled';
+        PRINT ERROR_NUMBER();
+        PRINT ERROR_MESSAGE();
+        PRINT ERROR_NUMBER();
+        THROW 665555, 'ERROR OCCURRED - TRY AGAIN LATER', 1;
+    END CATCH;
+END;
 
-		UPDATE @PMI SET PMI=NULL--TRANSACTION ROLLED BACK; ID canceled';
-		PRINT ERROR_NUMBER();
-		PRINT ERROR_MESSAGE();
-		PRINT ERROR_NUMBER();
-		THROW  665555,  'ERROR OCCURRED - TRY AGAIN LATER',1;
-    END CATCH
-END
 
